@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "Sakhi Suraksha",
+    "slug": "sakhi-suraksha",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "description": "A mobile application designed to promote menstrual hygiene, safety, awareness, and support for women and girls. It combines health tracking, emergency assistance, and resource accessibility into one easy-to-use app.",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FF69B4"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sakhisuraksha.app",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "This app uses location to help you find nearby stores with menstrual hygiene products.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "This app uses location to help you find nearby stores with menstrual hygiene products."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FF69B4"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.sakhisuraksha.app",
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "CALL_PHONE",
+        "SEND_SMS",
+        "READ_PHONE_STATE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Sakhi Suraksha to use your location to find nearby stores."
+        }
+      ]
+    ]
+  }
+}
