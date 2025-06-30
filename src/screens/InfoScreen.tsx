@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  Platform,
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
@@ -144,75 +145,165 @@ const InfoScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Ionicons name="book" size={48} color="#2196F3" />
-          <Text style={styles.title}>Learn Menstrual Health</Text>
-          <Text style={styles.subtitle}>
-            Essential information for your health and well-being
-          </Text>
-        </View>
+      {Platform.OS === 'web' ? (
+        <div style={{ overflowY: 'auto', maxHeight: '100vh', padding: 20 }}>
+          {/* YouTube Video for web */}
+          <div style={{ width: '100%', maxWidth: 600, margin: '0 auto 24px auto' }}>
+            <iframe
+              width="100%"
+              height="315"
+              src="https://www.youtube.com/embed/E7hk5HirLh0"
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            ></iframe>
+          </div>
 
-        {/* Info Sections */}
-        {infoSections.map((section) => (
-          <View key={section.id} style={styles.section}>
-            <TouchableOpacity
-              style={styles.sectionHeader}
-              onPress={() => toggleSection(section.id)}
-              activeOpacity={0.7}
-            >
-              <View style={styles.sectionTitleContainer}>
-                <Ionicons
-                  name={section.icon as any}
-                  size={24}
-                  color={section.color}
-                />
-                <Text style={styles.sectionTitle}>{section.title}</Text>
-              </View>
-              <Ionicons
-                name={
-                  expandedSection === section.id
-                    ? 'chevron-up'
-                    : 'chevron-down'
-                }
-                size={24}
-                color="#666"
-              />
-            </TouchableOpacity>
-
-            {expandedSection === section.id && (
-              <View style={styles.sectionContent}>
-                {section.content.map((item, index) => (
-                  <Text key={index} style={styles.contentText}>
-                    {item}
-                  </Text>
-                ))}
-              </View>
-            )}
+          {/* Header */}
+          <View style={styles.header}>
+            <Ionicons name="book" size={48} color="#2196F3" />
+            <Text style={styles.title}>Learn Menstrual Health</Text>
+            <Text style={styles.subtitle}>
+              Essential information for your health and well-being
+            </Text>
           </View>
-        ))}
 
-        {/* Additional Resources */}
-        <View style={styles.resourcesContainer}>
-          <Text style={styles.resourcesTitle}>📚 Additional Resources</Text>
-          <Text style={styles.resourcesText}>
-            • Talk to a trusted adult, teacher, or healthcare provider{'\n'}
-            • Visit reliable health websites for more information{'\n'}
-            • Join support groups or forums for young women{'\n'}
-            • Read books about puberty and menstrual health{'\n'}
-            • Remember: Every woman's experience is unique
-          </Text>
-        </View>
+          {/* Info Sections */}
+          {infoSections.map((section) => (
+            <View key={section.id} style={styles.section}>
+              <TouchableOpacity
+                style={styles.sectionHeader}
+                onPress={() => toggleSection(section.id)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.sectionTitleContainer}>
+                  <Ionicons
+                    name={section.icon as any}
+                    size={24}
+                    color={section.color}
+                  />
+                  <Text style={styles.sectionTitle}>{section.title}</Text>
+                </View>
+                <Ionicons
+                  name={
+                    expandedSection === section.id
+                      ? 'chevron-up'
+                      : 'chevron-down'
+                  }
+                  size={24}
+                  color="#666"
+                />
+              </TouchableOpacity>
 
-        {/* Emergency Contact */}
-        <View style={styles.emergencyContainer}>
-          <Text style={styles.emergencyTitle}>🚨 Emergency</Text>
-          <Text style={styles.emergencyText}>
-            If you're experiencing severe symptoms or have concerns about your health, don't hesitate to seek medical attention immediately.
-          </Text>
-        </View>
-      </ScrollView>
+              {expandedSection === section.id && (
+                <View style={styles.sectionContent}>
+                  {section.content.map((item, index) => (
+                    <Text key={index} style={styles.contentText}>
+                      {item}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            </View>
+          ))}
+
+          {/* Additional Resources */}
+          <View style={styles.resourcesContainer}>
+            <Text style={styles.resourcesTitle}>📚 Additional Resources</Text>
+            <Text style={styles.resourcesText}>
+              • Talk to a trusted adult, teacher, or healthcare provider{'\n'}
+              • Visit reliable health websites for more information{'\n'}
+              • Join support groups or forums for young women{'\n'}
+              • Read books about puberty and menstrual health{'\n'}
+              • Remember: Every woman's experience is unique
+            </Text>
+          </View>
+
+          {/* Emergency Contact */}
+          <View style={styles.emergencyContainer}>
+            <Text style={styles.emergencyTitle}>🚨 Emergency</Text>
+            <Text style={styles.emergencyText}>
+              If you're experiencing severe symptoms or have concerns about your health, don't hesitate to seek medical attention immediately.
+            </Text>
+          </View>
+        </div>
+      ) : (
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {/* YouTube Video for native */}
+          <View style={{ height: 200, backgroundColor: '#eee', justifyContent: 'center', alignItems: 'center', marginBottom: 24 }}>
+            <Text style={{ color: '#888' }}>YouTube video available on web version</Text>
+          </View>
+
+          {/* Header */}
+          <View style={styles.header}>
+            <Ionicons name="book" size={48} color="#2196F3" />
+            <Text style={styles.title}>Learn Menstrual Health</Text>
+            <Text style={styles.subtitle}>
+              Essential information for your health and well-being
+            </Text>
+          </View>
+
+          {/* Info Sections */}
+          {infoSections.map((section) => (
+            <View key={section.id} style={styles.section}>
+              <TouchableOpacity
+                style={styles.sectionHeader}
+                onPress={() => toggleSection(section.id)}
+                activeOpacity={0.7}
+              >
+                <View style={styles.sectionTitleContainer}>
+                  <Ionicons
+                    name={section.icon as any}
+                    size={24}
+                    color={section.color}
+                  />
+                  <Text style={styles.sectionTitle}>{section.title}</Text>
+                </View>
+                <Ionicons
+                  name={
+                    expandedSection === section.id
+                      ? 'chevron-up'
+                      : 'chevron-down'
+                  }
+                  size={24}
+                  color="#666"
+                />
+              </TouchableOpacity>
+
+              {expandedSection === section.id && (
+                <View style={styles.sectionContent}>
+                  {section.content.map((item, index) => (
+                    <Text key={index} style={styles.contentText}>
+                      {item}
+                    </Text>
+                  ))}
+                </View>
+              )}
+            </View>
+          ))}
+
+          {/* Additional Resources */}
+          <View style={styles.resourcesContainer}>
+            <Text style={styles.resourcesTitle}>📚 Additional Resources</Text>
+            <Text style={styles.resourcesText}>
+              • Talk to a trusted adult, teacher, or healthcare provider{'\n'}
+              • Visit reliable health websites for more information{'\n'}
+              • Join support groups or forums for young women{'\n'}
+              • Read books about puberty and menstrual health{'\n'}
+              • Remember: Every woman's experience is unique
+            </Text>
+          </View>
+
+          {/* Emergency Contact */}
+          <View style={styles.emergencyContainer}>
+            <Text style={styles.emergencyTitle}>🚨 Emergency</Text>
+            <Text style={styles.emergencyText}>
+              If you're experiencing severe symptoms or have concerns about your health, don't hesitate to seek medical attention immediately.
+            </Text>
+          </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };

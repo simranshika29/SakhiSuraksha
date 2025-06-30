@@ -1,0 +1,45 @@
+/* Main container for web screens */
+.main-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+iframe {
+  width: 100%;
+  max-width: 600px;
+  height: 315px;
+  border: none;
+  display: block;
+  margin: 0 auto 24px auto;
+}
+
+@media (max-width: 600px) {
+  .main-container {
+    padding: 8px;
+    font-size: 1em;
+  }
+  iframe {
+    height: 200px;
+  }
+  .sectionTitle, .title {
+    font-size: 1.2em !important;
+  }
+  .subtitle {
+    font-size: 1em !important;
+  }
+  button, .dateButton, .cycleButton {
+    font-size: 1em !important;
+    padding: 10px !important;
+  }
+}
+
+body, html, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  font-family: 'Segoe UI', Arial, sans-serif;
+} 

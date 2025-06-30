@@ -46,6 +46,8 @@ const MapScreen: React.FC<Props> = ({ navigation }) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [stores, setStores] = useState<Store[]>([]);
   const [selectedStore, setSelectedStore] = useState<Store | null>(null);
+  // Add state for native map components
+  const [nativeMaps, setNativeMaps] = useState<any>({ MapView: null, Marker: null, PROVIDER_GOOGLE: null });
 
   // Sample store data - in a real app, this would come from an API
   const sampleStores: Store[] = [
@@ -86,6 +88,18 @@ const MapScreen: React.FC<Props> = ({ navigation }) => {
       distance: 1.5,
     },
   ];
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') {
+      // Dynamically import react-native-maps only on native
+      const Maps = require('react-native-maps');
+      setNativeMaps({
+        MapView: Maps.default,
+        Marker: Maps.Marker,
+        PROVIDER_GOOGLE: Maps.PROVIDER_GOOGLE,
+      });
+    }
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -181,47 +195,49 @@ const MapScreen: React.FC<Props> = ({ navigation }) => {
               ))}
             </MapContainer>
           </div>
-        ) : (
-          <MapView
-            provider={PROVIDER_GOOGLE}
-            style={styles.map}
-            initialRegion={{
-              latitude: location?.coords.latitude || 28.6139,
-              longitude: location?.coords.longitude || 77.2090,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            }}
-            showsUserLocation={true}
-            showsMyLocationButton={true}
-          >
-            {/* User location marker */}
-            {location && (
-              <Marker
-                coordinate={{
-                  latitude: location.coords.latitude,
-                  longitude: location.coords.longitude,
-                }}
-                title="Your Location"
-                description="You are here"
-                pinColor="blue"
-              />
-            )}
-            {/* Store markers */}
-            {stores.map((store) => (
-              <Marker
-                key={store.id}
-                coordinate={{
-                  latitude: store.latitude,
-                  longitude: store.longitude,
-                }}
-                title={store.name}
-                description={store.type}
-                pinColor={store.type === 'Pharmacy' ? 'red' : 'green'}
-                onPress={() => handleStorePress(store)}
-              />
-            ))}
-          </MapView>
-        )}
+        ) :
+          nativeMaps.MapView && nativeMaps.Marker && (
+            <nativeMaps.MapView
+              provider={nativeMaps.PROVIDER_GOOGLE}
+              style={styles.map}
+              initialRegion={{
+                latitude: location?.coords.latitude || 28.6139,
+                longitude: location?.coords.longitude || 77.2090,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+              showsUserLocation={true}
+              showsMyLocationButton={true}
+            >
+              {/* User location marker */}
+              {location && (
+                <nativeMaps.Marker
+                  coordinate={{
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude,
+                  }}
+                  title="Your Location"
+                  description="You are here"
+                  pinColor="blue"
+                />
+              )}
+              {/* Store markers */}
+              {stores.map((store) => (
+                <nativeMaps.Marker
+                  key={store.id}
+                  coordinate={{
+                    latitude: store.latitude,
+                    longitude: store.longitude,
+                  }}
+                  title={store.name}
+                  description={store.type}
+                  pinColor={store.type === 'Pharmacy' ? 'red' : 'green'}
+                  onPress={() => handleStorePress(store)}
+                />
+              ))}
+            </nativeMaps.MapView>
+          )
+        }
       </View>
 
       {/* Store List */}

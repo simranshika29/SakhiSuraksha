@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  Platform,
 } from 'react-native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../../App';
@@ -72,114 +73,255 @@ const TrackerScreen: React.FC<Props> = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Ionicons name="calendar" size={48} color="#FF69B4" />
-          <Text style={styles.title}>Track My Cycle</Text>
-          <Text style={styles.subtitle}>
-            Monitor your menstrual cycle and stay prepared
-          </Text>
-        </View>
-
-        {/* Date Selection */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Last Period Date</Text>
-          <TouchableOpacity
-            style={styles.dateButton}
-            onPress={() => setShowDatePicker(true)}
-          >
-            <Ionicons name="calendar-outline" size={24} color="#FF69B4" />
-            <Text style={styles.dateButtonText}>
-              {lastPeriodDate ? formatDate(lastPeriodDate) : 'Select Date'}
+      {Platform.OS === 'web' ? (
+        <div style={{ overflowY: 'auto', maxHeight: '100vh', padding: 20 }}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Ionicons name="calendar" size={48} color="#FF69B4" />
+            <Text style={styles.title}>Track My Cycle</Text>
+            <Text style={styles.subtitle}>
+              Monitor your menstrual cycle and stay prepared
             </Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Cycle Length Adjustment */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Cycle Length</Text>
-          <View style={styles.cycleLengthContainer}>
-            <TouchableOpacity
-              style={styles.cycleButton}
-              onPress={() => {
-                if (cycleLength > 21) {
-                  setCycleLength(cycleLength - 1);
-                  if (lastPeriodDate) {
-                    setNextPeriodDate(calculateNextPeriod(lastPeriodDate));
-                  }
-                }
-              }}
-            >
-              <Ionicons name="remove" size={24} color="#FF69B4" />
-            </TouchableOpacity>
-            <Text style={styles.cycleLengthText}>{cycleLength} days</Text>
-            <TouchableOpacity
-              style={styles.cycleButton}
-              onPress={() => {
-                if (cycleLength < 35) {
-                  setCycleLength(cycleLength + 1);
-                  if (lastPeriodDate) {
-                    setNextPeriodDate(calculateNextPeriod(lastPeriodDate));
-                  }
-                }
-              }}
-            >
-              <Ionicons name="add" size={24} color="#FF69B4" />
-            </TouchableOpacity>
           </View>
-        </View>
 
-        {/* Next Period Prediction */}
-        {nextPeriodDate && (
+          {/* Date Selection */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Next Period Prediction</Text>
-            <View style={styles.predictionContainer}>
-              <Text style={styles.predictionDate}>
-                {formatDate(nextPeriodDate)}
-              </Text>
-              <Text style={styles.predictionDays}>
-                {getDaysUntilNextPeriod()! > 0
-                  ? `${getDaysUntilNextPeriod()} days away`
-                  : getDaysUntilNextPeriod()! === 0
-                  ? 'Today!'
-                  : `${Math.abs(getDaysUntilNextPeriod()!)} days overdue`}
-              </Text>
+            <Text style={styles.sectionTitle}>Last Period Date</Text>
+            {Platform.OS === 'web' ? (
+              <input
+                type="date"
+                style={{ padding: 10, fontSize: 16, borderRadius: 8, border: '1px solid #FF69B4', marginTop: 10 }}
+                value={lastPeriodDate ? lastPeriodDate.toISOString().split('T')[0] : ''}
+                onChange={e => {
+                  const selectedDate = new Date(e.target.value);
+                  setLastPeriodDate(selectedDate);
+                  const nextDate = calculateNextPeriod(selectedDate);
+                  setNextPeriodDate(nextDate);
+                }}
+                max={new Date().toISOString().split('T')[0]}
+              />
+            ) : (
+              <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Ionicons name="calendar-outline" size={24} color="#FF69B4" />
+                <Text style={styles.dateButtonText}>
+                  {lastPeriodDate ? formatDate(lastPeriodDate) : 'Select Date'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Cycle Length Adjustment */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Cycle Length</Text>
+            <View style={styles.cycleLengthContainer}>
+              <TouchableOpacity
+                style={styles.cycleButton}
+                onPress={() => {
+                  if (cycleLength > 21) {
+                    setCycleLength(cycleLength - 1);
+                    if (lastPeriodDate) {
+                      setNextPeriodDate(calculateNextPeriod(lastPeriodDate));
+                    }
+                  }
+                }}
+              >
+                <Ionicons name="remove" size={24} color="#FF69B4" />
+              </TouchableOpacity>
+              <Text style={styles.cycleLengthText}>{cycleLength} days</Text>
+              <TouchableOpacity
+                style={styles.cycleButton}
+                onPress={() => {
+                  if (cycleLength < 35) {
+                    setCycleLength(cycleLength + 1);
+                    if (lastPeriodDate) {
+                      setNextPeriodDate(calculateNextPeriod(lastPeriodDate));
+                    }
+                  }
+                }}
+              >
+                <Ionicons name="add" size={24} color="#FF69B4" />
+              </TouchableOpacity>
             </View>
           </View>
-        )}
 
-        {/* Current Cycle Phase */}
-        {getCyclePhase() && (
+          {/* Next Period Prediction */}
+          {nextPeriodDate && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Next Period Prediction</Text>
+              <View style={styles.predictionContainer}>
+                <Text style={styles.predictionDate}>
+                  {formatDate(nextPeriodDate)}
+                </Text>
+                <Text style={styles.predictionDays}>
+                  {getDaysUntilNextPeriod()! > 0
+                    ? `${getDaysUntilNextPeriod()} days away`
+                    : getDaysUntilNextPeriod()! === 0
+                    ? 'Today!'
+                    : `${Math.abs(getDaysUntilNextPeriod()!)} days overdue`}
+                </Text>
+              </View>
+            </View>
+          )}
+
+          {/* Current Cycle Phase */}
+          {getCyclePhase() && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Current Cycle Phase</Text>
+              <View style={styles.phaseContainer}>
+                <Text style={styles.phaseText}>{getCyclePhase()}</Text>
+              </View>
+            </View>
+          )}
+
+          {/* Tips */}
+          <View style={styles.tipsContainer}>
+            <Text style={styles.tipsTitle}>💡 Tips</Text>
+            <Text style={styles.tipsText}>
+              • Track your period regularly for better predictions{'\n'}
+              • Keep sanitary products ready 2-3 days before expected period{'\n'}
+              • Note any symptoms or irregularities{'\n'}
+              • Consult a doctor if you have concerns
+            </Text>
+          </View>
+
+          {showDatePicker && Platform.OS !== 'web' && (
+            <DateTimePicker
+              value={lastPeriodDate || new Date()}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+              maximumDate={new Date()}
+            />
+          )}
+        </div>
+      ) : (
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          {/* Header */}
+          <View style={styles.header}>
+            <Ionicons name="calendar" size={48} color="#FF69B4" />
+            <Text style={styles.title}>Track My Cycle</Text>
+            <Text style={styles.subtitle}>
+              Monitor your menstrual cycle and stay prepared
+            </Text>
+          </View>
+
+          {/* Date Selection */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Current Cycle Phase</Text>
-            <View style={styles.phaseContainer}>
-              <Text style={styles.phaseText}>{getCyclePhase()}</Text>
+            <Text style={styles.sectionTitle}>Last Period Date</Text>
+            {Platform.OS === 'web' ? (
+              <input
+                type="date"
+                style={{ padding: 10, fontSize: 16, borderRadius: 8, border: '1px solid #FF69B4', marginTop: 10 }}
+                value={lastPeriodDate ? lastPeriodDate.toISOString().split('T')[0] : ''}
+                onChange={e => {
+                  const selectedDate = new Date(e.target.value);
+                  setLastPeriodDate(selectedDate);
+                  const nextDate = calculateNextPeriod(selectedDate);
+                  setNextPeriodDate(nextDate);
+                }}
+                max={new Date().toISOString().split('T')[0]}
+              />
+            ) : (
+              <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Ionicons name="calendar-outline" size={24} color="#FF69B4" />
+                <Text style={styles.dateButtonText}>
+                  {lastPeriodDate ? formatDate(lastPeriodDate) : 'Select Date'}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+
+          {/* Cycle Length Adjustment */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Cycle Length</Text>
+            <View style={styles.cycleLengthContainer}>
+              <TouchableOpacity
+                style={styles.cycleButton}
+                onPress={() => {
+                  if (cycleLength > 21) {
+                    setCycleLength(cycleLength - 1);
+                    if (lastPeriodDate) {
+                      setNextPeriodDate(calculateNextPeriod(lastPeriodDate));
+                    }
+                  }
+                }}
+              >
+                <Ionicons name="remove" size={24} color="#FF69B4" />
+              </TouchableOpacity>
+              <Text style={styles.cycleLengthText}>{cycleLength} days</Text>
+              <TouchableOpacity
+                style={styles.cycleButton}
+                onPress={() => {
+                  if (cycleLength < 35) {
+                    setCycleLength(cycleLength + 1);
+                    if (lastPeriodDate) {
+                      setNextPeriodDate(calculateNextPeriod(lastPeriodDate));
+                    }
+                  }
+                }}
+              >
+                <Ionicons name="add" size={24} color="#FF69B4" />
+              </TouchableOpacity>
             </View>
           </View>
-        )}
 
-        {/* Tips */}
-        <View style={styles.tipsContainer}>
-          <Text style={styles.tipsTitle}>💡 Tips</Text>
-          <Text style={styles.tipsText}>
-            • Track your period regularly for better predictions{'\n'}
-            • Keep sanitary products ready 2-3 days before expected period{'\n'}
-            • Note any symptoms or irregularities{'\n'}
-            • Consult a doctor if you have concerns
-          </Text>
-        </View>
+          {/* Next Period Prediction */}
+          {nextPeriodDate && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Next Period Prediction</Text>
+              <View style={styles.predictionContainer}>
+                <Text style={styles.predictionDate}>
+                  {formatDate(nextPeriodDate)}
+                </Text>
+                <Text style={styles.predictionDays}>
+                  {getDaysUntilNextPeriod()! > 0
+                    ? `${getDaysUntilNextPeriod()} days away`
+                    : getDaysUntilNextPeriod()! === 0
+                    ? 'Today!'
+                    : `${Math.abs(getDaysUntilNextPeriod()!)} days overdue`}
+                </Text>
+              </View>
+            </View>
+          )}
 
-        {showDatePicker && (
-          <DateTimePicker
-            value={lastPeriodDate || new Date()}
-            mode="date"
-            display="default"
-            onChange={handleDateChange}
-            maximumDate={new Date()}
-          />
-        )}
-      </ScrollView>
+          {/* Current Cycle Phase */}
+          {getCyclePhase() && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Current Cycle Phase</Text>
+              <View style={styles.phaseContainer}>
+                <Text style={styles.phaseText}>{getCyclePhase()}</Text>
+              </View>
+            </View>
+          )}
+
+          {/* Tips */}
+          <View style={styles.tipsContainer}>
+            <Text style={styles.tipsTitle}>💡 Tips</Text>
+            <Text style={styles.tipsText}>
+              • Track your period regularly for better predictions{'\n'}
+              • Keep sanitary products ready 2-3 days before expected period{'\n'}
+              • Note any symptoms or irregularities{'\n'}
+              • Consult a doctor if you have concerns
+            </Text>
+          </View>
+
+          {showDatePicker && Platform.OS !== 'web' && (
+            <DateTimePicker
+              value={lastPeriodDate || new Date()}
+              mode="date"
+              display="default"
+              onChange={handleDateChange}
+              maximumDate={new Date()}
+            />
+          )}
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 };
